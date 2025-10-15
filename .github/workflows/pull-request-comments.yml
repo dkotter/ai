@@ -18,7 +18,9 @@ jobs:
 
   # Builds the plugin ZIP file.
   build-plugin-zip:
-    uses: ./.github/workflows/build-plugin-zip.yml
+    uses: dkotter/ai/.github/workflows/build-plugin-zip.yml@temp
+    permissions:
+      contents: read
 
   # Leaves a comment on a pull request with a link to test the changes in a WordPress Playground instance.
   playground-details:
