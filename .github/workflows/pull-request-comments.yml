@@ -18,6 +18,7 @@ jobs:
 
   # Builds the plugin ZIP file.
   build-plugin-zip:
+    name: Build plugin zip
     uses: dkotter/ai/.github/workflows/build-plugin-zip.yml@temp
     permissions:
       contents: read
@@ -130,8 +131,8 @@ jobs:
 
             [Test this pull request with WordPress Playground](${blueprintUrl}).`;
 
-            // Append the comment to the existing PR body.
-            const updatedBody = pr.body + playgroundComment;
+            // Append the comment to the existing PR body with proper spacing.
+            const updatedBody = pr.body + '\n\n' + playgroundComment;
 
             // Update the PR body.
             await github.rest.pulls.update({
