@@ -1,4 +1,4 @@
-# AI Experiments Plugin for WordPress
+# AI Experiments Plugin for WordPress TEST
 
 The AI Experiments plugin provides a set of opt-in, experimental AI features for authors, editors, and admins directly inside WordPress.  It serves as a reference implementation for developers, agencies, and hosts looking to build or extend AI-powered workflows using the building blocks from the WordPress AI team (as [*part of the **AI Building Blocks for WordPress** initiative*](https://make.wordpress.org/ai/2025/07/17/ai-building-blocks)).
 
