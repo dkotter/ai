@@ -20,7 +20,46 @@ use WordPress\AI\Abstracts\Abstract_Ability;
 class Title_Generation extends Abstract_Ability {
 
 	/**
-	 * Returns the category of the ability.
+	 * The Feature that the ability belongs to.
+	 *
+	 * @since 0.1.0
+	 * @var \WordPress\AI\Features\Title_Generation\Title_Generation
+	 */
+	protected $feature;
+
+	/**
+	 * Constructor
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param \WordPress\AI\Features\Title_Generation\Title_Generation $feature The Feature this ability is is registered to.
+	 */
+	public function __construct( \WordPress\AI\Features\Title_Generation\Title_Generation $feature ) {
+		$this->feature = $feature;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function name(): string {
+		return $this->feature->get_id();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function description(): string {
+		return $this->feature->get_description();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function label(): string {
+		return $this->feature->get_label();
+	}
+
+	/**
 	 *
 	 * @since 0.1.0
 	 *
@@ -31,11 +70,7 @@ class Title_Generation extends Abstract_Ability {
 	}
 
 	/**
-	 * Returns the input schema of the ability.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return array<string, mixed> The input schema of the ability.
+	 * {@inheritDoc}
 	 */
 	protected function input_schema(): array {
 		return array(
@@ -63,11 +98,7 @@ class Title_Generation extends Abstract_Ability {
 	}
 
 	/**
-	 * Returns the output schema of the ability.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return array<string, mixed> The output schema of the ability.
+	 * {@inheritDoc}
 	 */
 	protected function output_schema(): array {
 		return array(
@@ -85,12 +116,7 @@ class Title_Generation extends Abstract_Ability {
 	}
 
 	/**
-	 * Executes the ability with the given input arguments.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param mixed $input The input arguments to the ability.
-	 * @return mixed|\WP_Error The result of the ability execution, or a WP_Error on failure.
+	 * {@inheritDoc}
 	 */
 	protected function execute_callback( $input ) {
 		// Default arguments.
@@ -129,9 +155,9 @@ class Title_Generation extends Abstract_Ability {
 		// TODO: Implement the title generation logic.
 
 		return array(
-			'name'        => $this->get_name(),
-			'label'       => $this->get_label(),
-			'description' => $this->get_description(),
+			'name'        => $this->name(),
+			'label'       => $this->label(),
+			'description' => $this->description(),
 			'content'     => wp_kses_post( $args['content'] ),
 			'post_id'     => $args['post_id'] ? absint( $args['post_id'] ) : esc_html__( 'Not provided', 'ai' ),
 			'n'           => absint( $args['n'] ),
@@ -193,11 +219,7 @@ class Title_Generation extends Abstract_Ability {
 	}
 
 	/**
-	 * Returns the meta of the ability.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return array<string, mixed> The meta of the ability.
+	 * {@inheritDoc}
 	 */
 	protected function meta(): array {
 		return array(
