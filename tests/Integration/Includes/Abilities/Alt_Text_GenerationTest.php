@@ -35,7 +35,7 @@ class Test_Alt_Text_Generation_Experiment extends Abstract_Feature {
 	protected function load_metadata(): array {
 		return array(
 			'label'       => 'Alt Text Generation',
-			'description' => 'Generates descriptive alt text for images using AI vision models.',
+			'description' => 'Generates accessible alternative text for images using AI vision models.',
 		);
 	}
 
@@ -171,6 +171,19 @@ class Alt_Text_GenerationTest extends WP_UnitTestCase {
 
 		$this->assertIsString( $system_instruction, 'System instruction should be a string' );
 		$this->assertNotEmpty( $system_instruction, 'System instruction should not be empty' );
+	}
+
+	/**
+	 * Test that finalize_generated_alt_text() maps the decorative token to an empty string.
+	 */
+	public function test_finalize_generated_alt_text_maps_decorative_token() {
+		$reflection = new \ReflectionClass( $this->ability );
+		$method     = $reflection->getMethod( 'finalize_generated_alt_text' );
+		$method->setAccessible( true );
+
+		$this->assertSame( '', $method->invoke( $this->ability, '[[DECORATIVE_ALT]]' ), 'Decorative token should become empty alt' );
+		$this->assertSame( '', $method->invoke( $this->ability, ' [[decorative_alt]] ' ), 'Decorative token match should be case-insensitive' );
+		$this->assertSame( 'JFK airport website', $method->invoke( $this->ability, 'JFK airport website' ), 'Normal text should pass through' );
 	}
 
 	/**

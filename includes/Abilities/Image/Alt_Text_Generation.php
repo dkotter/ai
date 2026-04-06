@@ -18,7 +18,7 @@ use function WordPress\AI\normalize_content;
 /**
  * Alt text generation WordPress Ability.
  *
- * Uses AI vision models to generate descriptive alt text for images.
+ * Uses AI vision models to propose alt text aligned with WCAG-oriented practice.
  *
  * @since 0.3.0
  */
@@ -32,6 +32,15 @@ class Alt_Text_Generation extends Abstract_Ability {
 	 * @var int
 	 */
 	protected const MAX_ALT_TEXT_LENGTH = 125;
+
+	/**
+	 * Model output token that means the correct alternative text is empty (alt="").
+	 *
+	 * @since 0.6.1
+	 *
+	 * @var string
+	 */
+	private const DECORATIVE_ALT_TOKEN = '[[DECORATIVE_ALT]]';
 
 	/**
 	 * {@inheritDoc}
@@ -72,7 +81,7 @@ class Alt_Text_Generation extends Abstract_Ability {
 			'properties' => array(
 				'alt_text' => array(
 					'type'        => 'string',
-					'description' => esc_html__( 'Generated alt text for the image.', 'ai' ),
+					'description' => esc_html__( 'Generated alternative text for the image; may be empty when alt="" is correct.', 'ai' ),
 				),
 			),
 		);
@@ -108,14 +117,7 @@ class Alt_Text_Generation extends Abstract_Ability {
 			return $result;
 		}
 
-		if ( empty( $result ) ) {
-			return new WP_Error(
-				'no_results',
-				esc_html__( 'No alt text was generated.', 'ai' )
-			);
-		}
-
-		// Return the alt text in the format the Ability expects.
+		// Return the alt text in the format the Ability expects (may be intentionally empty).
 		return array(
 			'alt_text' => sanitize_text_field( $result ),
 		);
@@ -199,11 +201,25 @@ class Alt_Text_Generation extends Abstract_Ability {
 			return $result;
 		}
 
-		// Clean up the result.
-		$alt_text = trim( $result );
+		return $this->finalize_generated_alt_text( $result );
+	}
+
+	/**
+	 * Trims, maps decorative token to empty string, and enforces max length.
+	 *
+	 * @since 0.6.1
+	 *
+	 * @param string $raw Raw model output.
+	 * @return string Final alt text (may be empty).
+	 */
+	protected function finalize_generated_alt_text( string $raw ): string {
+		$alt_text = trim( $raw );
 		$alt_text = trim( $alt_text, '"\'.' );
 
-		// Truncate if too long.
+		if ( 0 === strcasecmp( trim( $alt_text ), self::DECORATIVE_ALT_TOKEN ) ) {
+			return '';
+		}
+
 		if ( mb_strlen( $alt_text, 'UTF-8' ) > self::MAX_ALT_TEXT_LENGTH ) {
 			$alt_text = mb_substr( $alt_text, 0, self::MAX_ALT_TEXT_LENGTH - 3, 'UTF-8' ) . '...';
 		}

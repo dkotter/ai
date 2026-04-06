@@ -17,7 +17,10 @@ import { store as editorStore } from '@wordpress/editor';
  * Internal dependencies
  */
 import type { ImageBlockAttributes } from '../types';
-import { generateAltText } from '../../../utils/generate-alt-text';
+import {
+	buildImageBlockUsageContext,
+	generateAltText,
+} from '../../../utils/generate-alt-text';
 
 interface AltTextControlsProps {
 	clientId: string;
@@ -80,11 +83,13 @@ export function AltTextControls( {
 
 		try {
 			const content = select( editorStore ).getEditedPostContent();
+			const imageUsageNotes = buildImageBlockUsageContext( attributes );
 			const result = await generateAltText(
 				attachmentId,
 				imageUrl,
 				content,
-				clientId
+				clientId,
+				imageUsageNotes || undefined
 			);
 			setGeneratedAlt( result );
 		} catch ( err: any ) {
@@ -107,7 +112,7 @@ export function AltTextControls( {
 	 * Applies the generated alt text to the image block.
 	 */
 	const handleApply = () => {
-		if ( generatedAlt ) {
+		if ( generatedAlt !== null ) {
 			setAttributes( { alt: generatedAlt } );
 			setGeneratedAlt( null );
 		}
