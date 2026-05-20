@@ -42,5 +42,13 @@ parameters:
 				- vendor/
 				- includes/Logging/Logging_Integration.php
 				- includes/Logging/Logging_Http_Transporter.php
+				# Chrome on-device experiment registers a PHP stub provider that extends
+				# WordPress\AiClient\* — unresolvable until that namespace ships as analyzable
+				# stubs. Same rationale as the Logging_* exclusions above.
+				- includes/Experiments/Chrome_On_Device/Chrome_On_Device.php
+				- includes/Experiments/Chrome_On_Device/Provider/Chrome_Provider.php
+				- includes/Experiments/Chrome_On_Device/Provider/Chrome_Availability.php
+				- includes/Experiments/Chrome_On_Device/Provider/Chrome_Model.php
+				- includes/Experiments/Chrome_On_Device/Provider/Chrome_Model_Metadata_Directory.php
 			analyseAndScan:
 				- node_modules (?)

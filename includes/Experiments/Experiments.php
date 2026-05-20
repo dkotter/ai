@@ -30,6 +30,7 @@ final class Experiments {
 		\WordPress\AI\Experiments\Abilities_Explorer\Abilities_Explorer::class,
 		\WordPress\AI\Experiments\Connector_Approval\Connector_Approval::class,
 		\WordPress\AI\Experiments\AI_Request_Logging\AI_Request_Logging::class,
+		\WordPress\AI\Experiments\Chrome_On_Device\Chrome_On_Device::class,
 		\WordPress\AI\Experiments\Content_Classification\Content_Classification::class,
 		\WordPress\AI\Experiments\Content_Resizing\Content_Resizing::class,
 		\WordPress\AI\Experiments\Excerpt_Generation\Excerpt_Generation::class,
