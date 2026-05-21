@@ -11,6 +11,7 @@ namespace WordPress\AI\Experiments\Chrome_On_Device;
 
 use WP_Connector_Registry;
 use WordPress\AI\Abstracts\Abstract_Feature;
+use WordPress\AI\Asset_Loader;
 use WordPress\AI\Experiments\Chrome_On_Device\Provider\Chrome_Provider;
 use WordPress\AI\Experiments\Experiment_Category;
 use WordPress\AiClient\AiClient;
@@ -58,6 +59,50 @@ class Chrome_On_Device extends Abstract_Feature {
 		$this->register_provider();
 		$this->register_fallback_auth();
 		$this->register_connector();
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+	}
+
+	/**
+	 * Returns the ability IDs that have an on-device prompt mapping.
+	 *
+	 * Source of truth for what `src/experiments/chrome-on-device/schema.ts`
+	 * implements. Adding an ability here without a JS-side spec is a no-op.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return list<string> Ability IDs eligible for on-device execution.
+	 */
+	public function get_eligible_ability_ids(): array {
+		return array(
+			'ai/title-generation',
+		);
+	}
+
+	/**
+	 * Enqueues the experiment script on the post-edit screens.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $hook_suffix The current admin page hook suffix.
+	 */
+	public function enqueue_assets( string $hook_suffix ): void {
+		if ( 'post.php' !== $hook_suffix && 'post-new.php' !== $hook_suffix ) {
+			return;
+		}
+
+		Asset_Loader::enqueue_script(
+			'chrome_on_device',
+			'experiments/chrome-on-device',
+			array( 'include_core_abilities' => true )
+		);
+		Asset_Loader::localize_script(
+			'chrome_on_device',
+			'ChromeOnDeviceData',
+			array(
+				'enabled'   => $this->is_enabled(),
+				'abilities' => $this->get_eligible_ability_ids(),
+			)
+		);
 	}
 
 	/**

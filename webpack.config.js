@@ -50,6 +50,11 @@ module.exports = {
 			'src/experiments/abilities-explorer',
 			'index.js'
 		),
+		'experiments/chrome-on-device': path.resolve(
+			process.cwd(),
+			'src/experiments/chrome-on-device',
+			'index.ts'
+		),
 		'experiments/content-resizing': path.resolve(
 			process.cwd(),
 			'src/experiments/content-resizing',
