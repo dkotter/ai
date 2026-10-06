@@ -264,14 +264,12 @@ abstract class Abstract_Feature implements Feature {
 	}
 
 	/**
-	 * Gets the names of options the feature reads on every request.
+	 * {@inheritDoc}
 	 *
-	 * Override this method in child classes so these options are loaded
-	 * together with the feature toggles, in one query.
+	 * Override this method in child classes to list the options the feature
+	 * reads on every request.
 	 *
 	 * @since x.x.x
-	 *
-	 * @return list<string> Option names.
 	 */
 	public function get_preloaded_options(): array {
 		return array();

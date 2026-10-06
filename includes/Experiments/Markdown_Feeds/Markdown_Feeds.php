@@ -104,7 +104,10 @@ class Markdown_Feeds extends Abstract_Feature {
 	 * @since x.x.x
 	 */
 	public function get_preloaded_options(): array {
-		return array( self::FLUSH_FLAG_OPTION );
+		return array(
+			self::FLUSH_FLAG_OPTION,
+			static::get_field_option_name( 'accept_header' ),
+		);
 	}
 
 	/**

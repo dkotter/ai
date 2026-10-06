@@ -196,16 +196,19 @@ final class Loader {
 		if ( ! wp_using_ext_object_cache() ) {
 			$options = array();
 			foreach ( $features as $feature ) {
-				$options[] = sprintf( 'wpai_feature_%s_enabled', $feature::get_id() );
-
-				if ( ! method_exists( $feature, 'get_preloaded_options' ) ) {
-					continue;
-				}
-
-				$options = array_merge( $options, $feature->get_preloaded_options() );
+				$options[] = array( sprintf( 'wpai_feature_%s_enabled', $feature::get_id() ) );
+				$options[] = (array) $feature->get_preloaded_options();
 			}
 
-			wp_prime_option_caches( $options );
+			// Drop anything that isn't an option name, since third-party features can return anything.
+			$options = array_filter(
+				array_merge( ...$options ),
+				static function ( $option ): bool {
+					return is_string( $option ) && '' !== $option;
+				}
+			);
+
+			wp_prime_option_caches( array_values( array_unique( $options ) ) );
 		}
 
 		foreach ( $features as $feature ) {

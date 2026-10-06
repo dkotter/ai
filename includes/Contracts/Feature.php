@@ -133,4 +133,16 @@ interface Feature {
 	 * @return string The capability type (e.g. 'text_generation', 'image_generation', 'vision').
 	 */
 	public function get_capability(): string;
+
+	/**
+	 * Gets the names of options the feature reads on every request.
+	 *
+	 * These are loaded together with the feature toggles, in one query, on
+	 * sites without a persistent object cache.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return list<string> Option names.
+	 */
+	public function get_preloaded_options(): array;
 }

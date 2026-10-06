@@ -59,6 +59,27 @@ class Mock_Experiment extends Abstract_Feature {
 }
 
 /**
+ * Experiment that lists unusable and repeated option names to preload.
+ *
+ * @since x.x.x
+ */
+class Junk_Preload_Experiment extends Mock_Experiment {
+	/**
+	 * {@inheritDoc}
+	 */
+	public static function get_id(): string {
+		return 'junk-preload-experiment';
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_preloaded_options(): array {
+		return array( '', null, 42, 'wpai_mock-experiment_flag' );
+	}
+}
+
+/**
  * Experiment that throws during instantiation.
  *
  * @since 0.1.0
@@ -424,6 +445,23 @@ class LoaderTest extends WP_UnitTestCase {
 			),
 			'Reading the option afterwards should not query.'
 		);
+	}
+
+	/**
+	 * Test preloaded option names that aren't usable are dropped before priming.
+	 *
+	 * @since x.x.x
+	 */
+	public function test_unusable_preloaded_options_are_dropped() {
+		$this->registry->register_feature( new Mock_Experiment() );
+		$this->registry->register_feature( new Junk_Preload_Experiment() );
+
+		wp_cache_flush();
+		$queries = $this->queries_naming( 'wpai_mock-experiment_flag', array( $this->loader, 'init' ) );
+
+		$this->assertCount( 1, $queries, 'The options should be loaded with one query.' );
+		$this->assertSame( 1, substr_count( $queries[0], "'wpai_mock-experiment_flag'" ), 'Repeated option names should be loaded once.' );
+		$this->assertStringNotContainsString( "''", $queries[0], 'Empty option names should be dropped.' );
 	}
 
 	/**
